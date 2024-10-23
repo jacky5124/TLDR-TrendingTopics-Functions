@@ -1,5 +1,6 @@
 import * as df from 'durable-functions';
 import { ActivityHandler } from 'durable-functions';
+import { getEnv } from '../utils/envGetter';
 
 const callBingSearchAPI = async (mkt: string, apiKey: string): Promise<any> => {
     const url = `https://api.bing.microsoft.com/v7.0/news/trendingtopics?mkt=${mkt}`;
@@ -14,7 +15,7 @@ const callBingSearchAPI = async (mkt: string, apiKey: string): Promise<any> => {
 
 const searchBing: ActivityHandler = async (input: any): Promise<string[]> => {
     const mkt: string = input['mkt'];
-    const apiKey: string = input['apiKey'];
+    const apiKey: string = getEnv("BING_SEARCH_API_KEY");
     const response = await callBingSearchAPI(mkt, apiKey);
     const topics: any[] = response['value'];
     return topics.map((topic) => topic['query']['text']);

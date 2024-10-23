@@ -5,9 +5,7 @@ import { DateTime } from "luxon";
 const refresh: OrchestrationHandler = function* (context: OrchestrationContext) {
     const input = context.df.getInput<string>();
 
-    const secrets: any = yield context.df.callActivity('getSecretsActivity');
-
-    const bingSearchInput = {"mkt": input['mkt'], "apiKey": secrets["bingSearchSecret"]};
+    const bingSearchInput = {"mkt": input['mkt']};
     const topics: string[] = yield context.df.callActivity('searchBingActivity', bingSearchInput);
 
     const newsOfTopics = [];
@@ -16,18 +14,16 @@ const refresh: OrchestrationHandler = function* (context: OrchestrationContext) 
     const country = input["country"];
     const searchLang = input["searchLang"];
     const uiLang = input["uiLang"];
-    const braveSearchSecret = secrets["braveSearchSecret"];
     for (let page = 0; page < numPages; page++) {
         const numItems = Math.min(numTopicsPerPage, topics.length - page * numTopicsPerPage);
         const braveSearchTasks = [];
         const deadline = DateTime.fromJSDate(context.df.currentUtcDateTime, {zone: 'utc'}).plus({seconds: 1});
         for (let item = 0; item < numItems; item++) {
             const braveSearchInput = {
-                "q": topics[page * numPages + item],
+                "q": topics[page * numTopicsPerPage + item],
                 "country": country,
                 "searchLang": searchLang,
-                "uiLang": uiLang,
-                "apiKey": braveSearchSecret
+                "uiLang": uiLang
             };
             braveSearchTasks.push(context.df.callActivity('searchBraveActivity', braveSearchInput));
         }
@@ -36,6 +32,7 @@ const refresh: OrchestrationHandler = function* (context: OrchestrationContext) 
         results.pop();
         newsOfTopics.push(...results);
     }
+
     return newsOfTopics;
 };
 

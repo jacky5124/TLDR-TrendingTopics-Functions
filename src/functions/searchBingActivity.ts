@@ -15,13 +15,9 @@ const callBingSearchAPI = async (mkt: string, apiKey: string): Promise<any> => {
 const searchBing: ActivityHandler = async (input: any): Promise<string[]> => {
     const mkt: string = input['mkt'];
     const apiKey: string = input['apiKey'];
-    const trendingTopics = await callBingSearchAPI(mkt, apiKey);
-    const topics = [];
-    for (let trendingTopic of trendingTopics['value']) {
-        const topic = trendingTopic['query']['text'];
-        topics.push(topic);
-    }
-    return topics;
+    const response = await callBingSearchAPI(mkt, apiKey);
+    const topics: any[] = response['value'];
+    return topics.map((topic) => topic['query']['text']);
 };
 
 df.app.activity('searchBingActivity', { handler: searchBing });

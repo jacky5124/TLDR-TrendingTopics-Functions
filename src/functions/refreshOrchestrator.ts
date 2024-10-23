@@ -1,11 +1,42 @@
 import * as df from 'durable-functions';
 import { OrchestrationContext, OrchestrationHandler } from 'durable-functions';
+import { DateTime } from "luxon";
 
 const refresh: OrchestrationHandler = function* (context: OrchestrationContext) {
-    const mkt = context.df.getInput<string>();
-    const secrets = yield context.df.callActivity('getSecretsActivity');
-    const bingSearchInput = {"mkt": mkt, "apiKey": secrets["bingSearchSecret"]};
-    return yield context.df.callActivity('searchBingActivity', bingSearchInput);
+    const input = context.df.getInput<string>();
+
+    const secrets: any = yield context.df.callActivity('getSecretsActivity');
+
+    const bingSearchInput = {"mkt": input['mkt'], "apiKey": secrets["bingSearchSecret"]};
+    const topics: string[] = yield context.df.callActivity('searchBingActivity', bingSearchInput);
+
+    const newsOfTopics = [];
+    const numTopicsPerPage = 5;
+    const numPages = Math.ceil(topics.length / numTopicsPerPage);
+    const country = input["country"];
+    const searchLang = input["searchLang"];
+    const uiLang = input["uiLang"];
+    const braveSearchSecret = secrets["braveSearchSecret"];
+    for (let page = 0; page < numPages; page++) {
+        const numItems = Math.min(numTopicsPerPage, topics.length - page * numTopicsPerPage);
+        const braveSearchTasks = [];
+        const deadline = DateTime.fromJSDate(context.df.currentUtcDateTime, {zone: 'utc'}).plus({seconds: 1});
+        for (let item = 0; item < numItems; item++) {
+            const braveSearchInput = {
+                "q": topics[page * numPages + item],
+                "country": country,
+                "searchLang": searchLang,
+                "uiLang": uiLang,
+                "apiKey": braveSearchSecret
+            };
+            braveSearchTasks.push(context.df.callActivity('searchBraveActivity', braveSearchInput));
+        }
+        braveSearchTasks.push(context.df.createTimer(deadline.toJSDate()));
+        const results: any[] = yield context.df.Task.all(braveSearchTasks);
+        results.pop();
+        newsOfTopics.push(...results);
+    }
+    return newsOfTopics;
 };
 
 df.app.orchestration('refreshOrchestrator', refresh);

@@ -14,9 +14,11 @@
     "@azure/functions": "^4.0.0",
     "@azure/identity": "^4.5.0",
     "@azure/keyvault-secrets": "^4.9.0",
-    "durable-functions": "^3.0.0-alpha.5"
+    "durable-functions": "^3.0.0-alpha.5",
+    "luxon": "^3.5.0"
   },
   "devDependencies": {
+    "@types/luxon": "^3.4.2",
     "@types/node": "^20.x",
     "rimraf": "^5.0.0",
     "typescript": "^4.0.0"

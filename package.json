@@ -12,8 +12,6 @@
   },
   "dependencies": {
     "@azure/functions": "^4.0.0",
-    "@azure/identity": "^4.5.0",
-    "@azure/keyvault-secrets": "^4.9.0",
     "durable-functions": "^3.0.0-alpha.5",
     "luxon": "^3.5.0"
   },

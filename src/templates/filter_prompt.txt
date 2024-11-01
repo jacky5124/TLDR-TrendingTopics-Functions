@@ -1,0 +1,19 @@
+I saw a trending topic online, and I found a news article under that trending topic.
+
+The news article is presented by the following JSON format:
+
+{
+    "title": The title of the news article.
+    "url": The source URL of the news article.
+    "description": The description for the news article.
+    "extra_snippets": A list of extra alternative snippets for the news article.
+}
+
+And the actual contents are as follows:
+
+Trending topic: ${topic}
+Trending topic news: ${news}
+
+Can you determine whether the news article is relevant to the trending topic?
+
+You must only answer "true" if it is relevant or "false" if it is not relevant.

@@ -9,18 +9,18 @@ const refresh: OrchestrationHandler = function* (context: OrchestrationContext) 
     const topics: string[] = yield context.df.callActivity('searchBingActivity', bingSearchInput);
 
     const newsOfTopics = [];
-    const numTopicsPerPage = 5;
-    const numPages = Math.ceil(topics.length / numTopicsPerPage);
+    const numTopicsPerBatch = 5;
+    const numBatches = Math.ceil(topics.length / numTopicsPerBatch);
     const country = input["country"];
     const searchLang = input["searchLang"];
     const uiLang = input["uiLang"];
-    for (let page = 0; page < numPages; page++) {
-        const numItems = Math.min(numTopicsPerPage, topics.length - page * numTopicsPerPage);
+    for (let batch = 0; batch < numBatches; batch++) {
+        const numItems = Math.min(numTopicsPerBatch, topics.length - batch * numTopicsPerBatch);
         const braveSearchTasks = [];
         const deadline = DateTime.fromJSDate(context.df.currentUtcDateTime, {zone: 'utc'}).plus({seconds: 1});
         for (let item = 0; item < numItems; item++) {
             const braveSearchInput = {
-                "q": topics[page * numTopicsPerPage + item],
+                "q": topics[batch * numTopicsPerBatch + item],
                 "country": country,
                 "searchLang": searchLang,
                 "uiLang": uiLang
@@ -33,7 +33,20 @@ const refresh: OrchestrationHandler = function* (context: OrchestrationContext) 
         newsOfTopics.push(...results);
     }
 
-    return newsOfTopics;
+    const filterNewsTasks = [];
+    for (let newsOfTopic of newsOfTopics) {
+        const topic = newsOfTopic['topic'];
+        for (let newsResult of newsOfTopic['newsResults']) {
+            if (!newsResult['extra_snippets']) {
+                continue;
+            }
+            const filterNewsInput = {topic: topic, news: JSON.stringify(newsResult, null, 4)};
+            filterNewsTasks.push(context.df.callActivity('filterNewsActivity', filterNewsInput));
+        }
+    }
+    const newsRelevance: any[] = yield context.df.Task.all(filterNewsTasks);
+
+    return newsRelevance;
 };
 
 df.app.orchestration('refreshOrchestrator', refresh);

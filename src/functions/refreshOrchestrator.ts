@@ -9,7 +9,7 @@ const refresh: OrchestrationHandler = function* (context: OrchestrationContext) 
     const topics: string[] = yield context.df.callActivity('SearchBingActivity', bingSearchInput);
 
     const newsOfTopics = [];
-    const numTopicsPerBatch = 5;
+    const numTopicsPerBatch = input["BraveAPIRate"];
     const numBatches = Math.ceil(topics.length / numTopicsPerBatch);
     const country = input["country"];
     const searchLang = input["searchLang"];

@@ -40,13 +40,34 @@ const refresh: OrchestrationHandler = function* (context: OrchestrationContext) 
             if (!newsResult['extra_snippets']) {
                 continue;
             }
-            const filterNewsInput = {topic: topic, news: JSON.stringify(newsResult, null, 4)};
+            const filterNewsInput = {topic: topic, newsResult: newsResult};
             filterNewsTasks.push(context.df.callActivity('FilterNewsActivity', filterNewsInput));
         }
     }
     const newsRelevance: any[] = yield context.df.Task.all(filterNewsTasks);
 
-    return newsRelevance;
+    const relevantNewsResultsByTopics = new Map<string, any[]>();
+    for (let relevance of newsRelevance) {
+        if (!relevance['relevant']) {
+            continue;
+        }
+        const topic = relevance['topic'];
+        const newsResult = relevance['newsResult'];
+        if (relevantNewsResultsByTopics.has(topic)) {
+            relevantNewsResultsByTopics.get(topic).push(newsResult);
+        } else {
+            relevantNewsResultsByTopics.set(topic, [newsResult]);
+        }
+    }
+
+    const summarizeNewsTasks = [];
+    for (let [topic, relevantNewsResults] of relevantNewsResultsByTopics) {
+        const summarizeNewsInput = {topic: topic, relevantNewsResults: relevantNewsResults};
+        summarizeNewsTasks.push(context.df.callActivity('SummarizeNewsActivity', summarizeNewsInput));
+    }
+    const newsSummaries: any[] = yield context.df.Task.all(summarizeNewsTasks);
+
+    return newsSummaries;
 };
 
 df.app.orchestration('RefreshOrchestrator', refresh);

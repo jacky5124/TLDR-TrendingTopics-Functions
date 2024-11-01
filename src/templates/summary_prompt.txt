@@ -1,0 +1,17 @@
+I saw a trending topic online, and I found a bunch of news articles under that trending topic.
+
+Each news article is presented by the following JSON format:
+
+{
+    "title": The title of the news article.
+    "url": The source URL of the news article.
+    "description": The description for the news article.
+    "extra_snippets": A list of extra alternative snippets for the news article.
+}
+
+And the actual contents are as follows:
+
+Trending topic: ${topic}
+Trending topic news: ${news}
+
+Can you summarize the trending topic based on the given news?

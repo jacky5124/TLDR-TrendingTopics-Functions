@@ -7,12 +7,13 @@ import { generate } from '../utils/MetaLlamaAPICaller';
 
 const filterNews: ActivityHandler = async (input: any, context: InvocationContext): Promise<any> => {
     const topic = input["topic"];
-    const news = input["news"];
+    const newsResult = input["newsResult"];
 
     const filterInstruction = readFile("dist/src/templates/filter_instruction.txt");
     const filterPromptTemplate = readFile("dist/src/templates/filter_prompt.txt");
 
-    const filterPrompt = formatString(filterPromptTemplate, {topic: topic, news: news});
+    const newsResultJSON = JSON.stringify(newsResult, null, 4);
+    const filterPrompt = formatString(filterPromptTemplate, {topic: topic, news: newsResultJSON});
 
     const filterContent = await generate(filterInstruction, filterPrompt);
 
@@ -25,7 +26,7 @@ const filterNews: ActivityHandler = async (input: any, context: InvocationContex
         filterResult = undefined;
     }
 
-    return {topic: topic, news: news, relevant: filterResult};
+    return {topic: topic, newsResult: newsResult, relevant: filterResult};
 };
 
 df.app.activity('FilterNewsActivity', { handler: filterNews });

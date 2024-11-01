@@ -1,8 +1,8 @@
 import { InvocationContext } from '@azure/functions';
 import * as df from 'durable-functions';
 import { ActivityHandler } from 'durable-functions';
-import { readFile } from '../utils/fileReader';
-import { formatString } from '../utils/stringFormatter';
+import { readFile } from '../utils/FileReader';
+import { formatString } from '../utils/StringFormatter';
 import { generate } from '../utils/MetaLlamaAPICaller';
 
 const filterNews: ActivityHandler = async (input: any, context: InvocationContext): Promise<any> => {
@@ -28,4 +28,4 @@ const filterNews: ActivityHandler = async (input: any, context: InvocationContex
     return {topic: topic, news: news, relevant: filterResult};
 };
 
-df.app.activity('filterNewsActivity', { handler: filterNews });
+df.app.activity('FilterNewsActivity', { handler: filterNews });

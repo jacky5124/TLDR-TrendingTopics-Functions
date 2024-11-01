@@ -9,4 +9,4 @@ const searchBing: ActivityHandler = async (input: any): Promise<string[]> => {
     return topics.map((topic) => topic['query']['text']);
 };
 
-df.app.activity('searchBingActivity', { handler: searchBing });
+df.app.activity('SearchBingActivity', { handler: searchBing });

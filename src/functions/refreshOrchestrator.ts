@@ -6,7 +6,7 @@ const refresh: OrchestrationHandler = function* (context: OrchestrationContext) 
     const input = context.df.getInput<string>();
 
     const bingSearchInput = {"mkt": input['mkt']};
-    const topics: string[] = yield context.df.callActivity('searchBingActivity', bingSearchInput);
+    const topics: string[] = yield context.df.callActivity('SearchBingActivity', bingSearchInput);
 
     const newsOfTopics = [];
     const numTopicsPerBatch = 5;
@@ -25,7 +25,7 @@ const refresh: OrchestrationHandler = function* (context: OrchestrationContext) 
                 "searchLang": searchLang,
                 "uiLang": uiLang
             };
-            braveSearchTasks.push(context.df.callActivity('searchBraveActivity', braveSearchInput));
+            braveSearchTasks.push(context.df.callActivity('SearchBraveActivity', braveSearchInput));
         }
         braveSearchTasks.push(context.df.createTimer(deadline.toJSDate()));
         const results: any[] = yield context.df.Task.all(braveSearchTasks);
@@ -41,7 +41,7 @@ const refresh: OrchestrationHandler = function* (context: OrchestrationContext) 
                 continue;
             }
             const filterNewsInput = {topic: topic, news: JSON.stringify(newsResult, null, 4)};
-            filterNewsTasks.push(context.df.callActivity('filterNewsActivity', filterNewsInput));
+            filterNewsTasks.push(context.df.callActivity('FilterNewsActivity', filterNewsInput));
         }
     }
     const newsRelevance: any[] = yield context.df.Task.all(filterNewsTasks);
@@ -49,4 +49,4 @@ const refresh: OrchestrationHandler = function* (context: OrchestrationContext) 
     return newsRelevance;
 };
 
-df.app.orchestration('refreshOrchestrator', refresh);
+df.app.orchestration('RefreshOrchestrator', refresh);

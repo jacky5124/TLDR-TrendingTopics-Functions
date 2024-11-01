@@ -1,4 +1,4 @@
-import { getEnv } from './envGetter';
+import { getEnv } from './EnvGetter';
 
 export const callBraveSearchAPI = async (q: string, country: string, searchLang: string, uiLang: string): Promise<any> => {
     const apiKey = getEnv("BRAVE_SEARCH_API_KEY");

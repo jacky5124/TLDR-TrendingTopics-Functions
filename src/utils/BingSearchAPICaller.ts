@@ -1,4 +1,4 @@
-import { getEnv } from './envGetter';
+import { getEnv } from './EnvGetter';
 
 export const callBingSearchAPI = async (mkt: string): Promise<any> => {
     const apiKey = getEnv("BING_SEARCH_API_KEY");

@@ -20,4 +20,4 @@ const searchBrave: ActivityHandler = async (input: any): Promise<any> => {
     return {"topic": q, "newsResults": newsResults};
 }
 
-df.app.activity('searchBraveActivity', { handler: searchBrave });
+df.app.activity('SearchBraveActivity', { handler: searchBrave });

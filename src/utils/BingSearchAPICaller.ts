@@ -12,6 +12,6 @@ export const callBingSearchAPI = async (mkt: string): Promise<any> => {
     if (response.ok) {
         return response.json();
     } else {
-        throw new Error(`${response}`);
+        throw new Error(`status: ${response.status}, statusText: ${response.statusText}`);
     }
 };

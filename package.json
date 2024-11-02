@@ -14,6 +14,7 @@
   "dependencies": {
     "@azure-rest/ai-inference": "^1.0.0-beta.3",
     "@azure/functions": "^4.0.0",
+    "@azure/msal-node": "^2.15.0",
     "durable-functions": "^3.0.0-alpha.5",
     "luxon": "^3.5.0"
   },

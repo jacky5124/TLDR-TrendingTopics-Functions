@@ -5,7 +5,8 @@ import { DateTime } from "luxon";
 const refresh: OrchestrationHandler = function* (context: OrchestrationContext) {
     const input = context.df.getInput<string>();
 
-    const bingSearchInput = {"mkt": input['mkt']};
+    const mkt = input['mkt'];
+    const bingSearchInput = {"mkt": mkt};
     const topics: string[] = yield context.df.callActivity('SearchBingActivity', bingSearchInput);
 
     const newsOfTopics = [];
@@ -67,7 +68,9 @@ const refresh: OrchestrationHandler = function* (context: OrchestrationContext) 
     }
     const newsSummaries: any[] = yield context.df.Task.all(summarizeNewsTasks);
 
-    return newsSummaries;
+    const time = context.df.currentUtcDateTime.toJSON();
+    const cacheSummariesInput = {mkt: mkt, time: time, newsSummaries: newsSummaries};
+    return yield context.df.callActivity('CacheSummariesActivity', cacheSummariesInput);
 };
 
 df.app.orchestration('RefreshOrchestrator', refresh);

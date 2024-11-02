@@ -15,3 +15,5 @@ Trending topic: ${topic}
 Trending topic news: ${news}
 
 Can you summarize the trending topic based on the given news?
+
+You must only respond with the summary, nothing else.

@@ -11,7 +11,7 @@ export async function refreshMktEnCA(myTimer: Timer, context: InvocationContext)
 }
 
 app.timer('RefreshMktEnCATimer', {
-    schedule: '0 0 8/6 * * *',
+    schedule: '0 0 */6 * * *',
     extraInputs: [df.input.durableClient()],
     handler: refreshMktEnCA
 });

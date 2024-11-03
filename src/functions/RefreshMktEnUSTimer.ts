@@ -11,7 +11,7 @@ export async function refreshMktEnUS(myTimer: Timer, context: InvocationContext)
 }
 
 app.timer('RefreshMktEnUSTimer', {
-    schedule: '0 0 8/6 * * *',
+    schedule: '0 0 */6 * * *',
     extraInputs: [df.input.durableClient()],
     handler: refreshMktEnUS
 });

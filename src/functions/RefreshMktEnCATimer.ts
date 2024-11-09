@@ -1,5 +1,6 @@
 import { app, InvocationContext, Timer } from "@azure/functions";
 import * as df from 'durable-functions';
+import { getEnv } from '../utils/EnvGetter';
 
 export async function refreshMktEnCA(myTimer: Timer, context: InvocationContext): Promise<void> {
     context.log('Started refreshing summary of trending topics in mkt en-CA.');
@@ -11,7 +12,7 @@ export async function refreshMktEnCA(myTimer: Timer, context: InvocationContext)
 }
 
 app.timer('RefreshMktEnCATimer', {
-    schedule: '0 0 */6 * * *',
+    schedule: getEnv("EN_CA_TIMER"),
     extraInputs: [df.input.durableClient()],
     handler: refreshMktEnCA
 });

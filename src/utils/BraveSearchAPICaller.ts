@@ -13,6 +13,10 @@ export const callBraveSearchAPI = async (q: string, country: string, searchLang:
     if (response.ok) {
         return response.json();
     } else {
-        throw new Error(`status: ${response.status}, statusText: ${response.statusText}`);
+        throw new Error(
+            `status: ${response.status}, \
+            statusText: ${response.statusText}, \
+            responseBody: ${response.json()}`
+        );
     }
 };
